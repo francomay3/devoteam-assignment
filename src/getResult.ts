@@ -83,19 +83,25 @@ const getResult: GetResult = (startingPosition, input, language) => {
           }
           break;
       }
+      acc.path.push({ x: acc.x, y: acc.y });
       return acc;
     },
     {
       directionIndex: 0,
       x: startingPosition.x,
       y: startingPosition.y,
+      path: [],
+    } as {
+      directionIndex: number;
+      x: number;
+      y: number;
+      path: Position[];
     }
   );
   return {
     position: { x: result.x, y: result.y },
     direction: directions[result.directionIndex],
-    // hardcoded grid size
-    gridSize: { columns: 10, rows: 10 },
+    path: result.path,
   };
 };
 

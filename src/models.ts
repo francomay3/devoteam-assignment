@@ -21,10 +21,7 @@ export type Instructions = Instruction[];
 export type GridState = {
   position: Position;
   direction: Direction;
-  gridSize: {
-    columns: number;
-    rows: number;
-  };
+  path: Position[];
 };
 
 export type GridSize = { columns: number; rows: number };

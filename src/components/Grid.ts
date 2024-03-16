@@ -81,7 +81,10 @@ export class Grid extends HTMLElement {
   }) {
     this.clear();
     this.drawGrid(gridSize);
+
     const final = getResult(startingPosition, instructions, language);
+
+    this.drawPath(final.path, gridSize);
 
     this.drawRobot(
       this.initialRobotColor,
@@ -95,6 +98,31 @@ export class Grid extends HTMLElement {
       final.direction,
       gridSize
     );
+  }
+
+  private drawPath(path: Position[], gridSize: GridSize) {
+    const columnWidth = this.canvas.width / gridSize.columns;
+    const rowHeight = this.canvas.height / gridSize.rows;
+    const context = this.canvas.getContext("2d")!;
+
+    context.save();
+    context.strokeStyle = this.finalRobotColor;
+    context.lineWidth = this.arrowLineWidth;
+
+    context.beginPath();
+    context.moveTo(
+      path[0].x * columnWidth + columnWidth / 2,
+      path[0].y * rowHeight + rowHeight / 2
+    );
+    path.forEach((step) => {
+      context.lineTo(
+        step.x * columnWidth + columnWidth / 2,
+        step.y * rowHeight + rowHeight / 2
+      );
+    });
+    context.stroke();
+
+    context.restore();
   }
 
   private drawRobot(
@@ -113,49 +141,47 @@ export class Grid extends HTMLElement {
       x: position.x * columnWidth + columnWidth / 2,
       y: position.y * rowHeight + rowHeight / 2,
     };
-    const context = this.canvas.getContext("2d");
+    const context = this.canvas.getContext("2d")!;
 
-    if (context) {
-      context.save();
+    context.save();
 
-      context.fillStyle = color;
-      context.lineWidth = this.arrowLineWidth;
-      context.strokeStyle = color;
-      context.lineCap = "round";
+    context.fillStyle = color;
+    context.lineWidth = this.arrowLineWidth;
+    context.strokeStyle = color;
+    context.lineCap = "round";
 
-      context.beginPath();
-      context.arc(center.x, center.y, radius, 0, 2 * Math.PI);
-      context.fill();
+    context.beginPath();
+    context.arc(center.x, center.y, radius, 0, 2 * Math.PI);
+    context.fill();
 
-      context.translate(center.x, center.y);
+    context.translate(center.x, center.y);
 
-      switch (direction) {
-        case Direction.north:
-          context.rotate(0);
-          break;
-        case Direction.east:
-          context.rotate((90 * Math.PI) / 180);
-          break;
-        case Direction.south:
-          context.rotate((180 * Math.PI) / 180);
-          break;
-        case Direction.west:
-          context.rotate((270 * Math.PI) / 180);
-          break;
-      }
-
-      context.beginPath();
-      context.moveTo(0, 0);
-      context.lineTo(0, -arrowLength);
-      context.moveTo(-headLength, -arrowLength + headLength);
-      context.lineTo(0, -arrowLength);
-      context.moveTo(headLength, -arrowLength + headLength);
-      context.lineTo(0, -arrowLength);
-
-      context.stroke();
-
-      context.restore();
+    switch (direction) {
+      case Direction.north:
+        context.rotate(0);
+        break;
+      case Direction.east:
+        context.rotate((90 * Math.PI) / 180);
+        break;
+      case Direction.south:
+        context.rotate((180 * Math.PI) / 180);
+        break;
+      case Direction.west:
+        context.rotate((270 * Math.PI) / 180);
+        break;
     }
+
+    context.beginPath();
+    context.moveTo(0, 0);
+    context.lineTo(0, -arrowLength);
+    context.moveTo(-headLength, -arrowLength + headLength);
+    context.lineTo(0, -arrowLength);
+    context.moveTo(headLength, -arrowLength + headLength);
+    context.lineTo(0, -arrowLength);
+
+    context.stroke();
+
+    context.restore();
   }
 }
 
