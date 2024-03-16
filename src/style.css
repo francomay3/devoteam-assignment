@@ -1,5 +1,6 @@
 * {
   box-sizing: border-box;
+  font-family: "Open Sans", sans-serif;
 }
 
 body {
@@ -26,6 +27,32 @@ body {
   flex: 3;
 }
 
+.inline {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+}
+
+#config-container inline-component {
+  align-items: center;
+  justify-content: space-between;
+}
+
+#config-container .input,
+#config-container select {
+  flex: 1;
+}
+
+#config-container label {
+  /* width: 6rem; */
+  min-width: 5rem;
+}
+
 /* if mobile */
 @media (max-width: 600px) {
   #grid-container {
@@ -38,5 +65,29 @@ body {
 
   #app {
     flex-direction: column;
+  }
+}
+
+/* CustomInput */
+/* position: absolute;
+transform: translateY(100%); */
+custom-input {
+  .error {
+    color: red;
+    font-size: 0.8rem;
+    position: absolute;
+    z-index: -1;
+  }
+
+  .error.active {
+    transform: translateY(125%);
+  }
+
+  .error.inactive {
+    transform: translateY(-100%);
+  }
+
+  .error {
+    transition: transform 0.3s;
   }
 }

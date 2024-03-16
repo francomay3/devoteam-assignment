@@ -26,3 +26,5 @@ export type GridState = {
     rows: number;
   };
 };
+
+export type GridSize = { columns: number; rows: number };

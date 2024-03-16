@@ -1,4 +1,4 @@
-import { languageTranslations } from "./languageConfig";
+import { languageTranslations } from "./utils/languageConfig";
 import {
   Position,
   Direction,
@@ -6,7 +6,7 @@ import {
   Instructions,
   GridState,
 } from "./models";
-import { Language } from "./languageConfig";
+import { Language } from "./utils/languageConfig";
 
 const directions = [
   Direction.north,
@@ -44,6 +44,7 @@ const translateInstructions = (
   language: Language
 ): Instructions => {
   const upperInput = input.toUpperCase();
+
   return upperInput
     .split("")
     .map(translateInstruction(languageTranslations[language]));

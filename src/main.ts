@@ -1,74 +1,120 @@
 import "./style.css";
-import getResult from "./getResult";
-import { Position } from "./models";
-import { Language } from "./languageConfig";
-import Grid from "./Grid";
+import { Language } from "./utils/languageConfig";
+import {
+  startingPosition,
+  language,
+  instructions,
+  gridSize,
+} from "./StateManager";
+import "./components/index";
+import { Grid } from "./components/Grid";
+import { initialValues } from "./config";
+import {
+  columnIsInBounds,
+  greaterThan,
+  required,
+  rowIsInBounds,
+  validInstructions,
+  xIsInBounds,
+  yIsInBounds,
+} from "./utils/validationUtils";
 
 const appElement = document.querySelector<HTMLDivElement>("#app");
 
-const grid = new Grid();
-const configContainer = document.createElement("div");
-configContainer.id = "config-container";
+if (!appElement) {
+  throw new Error("Couldn't find app element");
+}
 
-const button = document.createElement("button");
-button.textContent = "Get Result";
-button.onclick = () => {
-  const input = document.querySelector<HTMLInputElement>("#input");
-  const result = document.querySelector<HTMLDivElement>("#result");
-  const xInput = document.querySelector<HTMLInputElement>("#x");
-  const yInput = document.querySelector<HTMLInputElement>("#y");
-  const languageSelect = document.querySelector<HTMLSelectElement>("#language");
+appElement.innerHTML = /*html*/ `
+  <div id="config-container">
 
-  if (input && result && xInput && yInput && languageSelect) {
-    const startingPosition: Position = {
-      x: parseInt(xInput.value),
-      y: parseInt(yInput.value),
-    };
+    <custom-input type="number" id="x" initial-value="${
+      startingPosition.current.x
+    }" label="Start X"></custom-input>
 
-    const resultValue = getResult(
-      startingPosition,
-      input.value,
-      languageSelect.value as Language
-    );
-    grid.update(resultValue);
-    result.textContent = JSON.stringify(resultValue);
-  }
-};
+    <custom-input type="number" id="y" initial-value="${
+      startingPosition.current.y
+    }" label="Start Y"></custom-input>
 
-const input = document.createElement("input");
-input.id = "input";
-input.placeholder = "Enter prompt";
+    <custom-input type="number" id="columns" initial-value="${
+      initialValues.gridSize.columns
+    }" label="Columns" min="1"></custom-input>
 
-const xInput = document.createElement("input");
-xInput.type = "number";
-xInput.id = "x";
-xInput.placeholder = "Enter x coordinate";
+    <custom-input type="number" id="rows" initial-value="${
+      initialValues.gridSize.rows
+    }" label="Rows" min="1"></custom-input>
 
-const yInput = document.createElement("input");
-yInput.type = "number";
-yInput.id = "y";
-yInput.placeholder = "Enter y coordinate";
+    <select-input id="language" label="Language" options="${Object.values(
+      Language
+    ).join(",")}" initial-value="${Language.english}"></select-input>
 
-const languageSelect = document.createElement("select");
-languageSelect.id = "language";
-Object.values(Language).forEach((language) => {
-  const option = document.createElement("option");
-  option.value = language;
-  option.textContent = language;
-  languageSelect.appendChild(option);
+    <custom-input id="instructions" label="Instructions" initial-value="${
+      instructions.current
+    }"></custom-input>
+
+  </div>
+
+  <grid-component id="grid"></grid-component>
+  `;
+
+const startingXInput = document.getElementById("x") as CustomInput;
+const startingYInput = document.getElementById("y") as CustomInput;
+const columnsInput = document.getElementById("columns") as CustomInput;
+const rowsInput = document.getElementById("rows") as CustomInput;
+const langInput = document.getElementById("language") as SelectInput;
+const instructionsInput = document.getElementById(
+  "instructions"
+) as CustomInput;
+const grid = document.getElementById("grid") as Grid;
+
+startingXInput.validators(required, xIsInBounds);
+startingYInput.validators(required, yIsInBounds);
+columnsInput.validators(required, greaterThan(0));
+rowsInput.validators(required, greaterThan(0));
+instructionsInput.validators(required, validInstructions);
+
+grid.update(initialValues);
+
+startingXInput.onChange((value: number) => {
+  startingPosition.set({ x: value, y: startingPosition.current.y });
 });
 
-const result = document.createElement("div");
-result.id = "result";
+startingYInput.onChange((value: number) => {
+  startingPosition.set({ x: startingPosition.current.x, y: value });
+});
 
-configContainer.appendChild(input);
-configContainer.appendChild(xInput);
-configContainer.appendChild(yInput);
-configContainer.appendChild(languageSelect);
-configContainer.appendChild(button);
-configContainer.appendChild(result);
+columnsInput.onChange((value: number) => {
+  gridSize.set({ columns: value, rows: gridSize.current.rows });
+});
 
-if (appElement) {
-  appElement.appendChild(configContainer);
-  appElement.appendChild(grid.container);
-}
+rowsInput.onChange((value: number) => {
+  if (value < 1) {
+    return;
+  }
+  gridSize.set({ columns: gridSize.current.columns, rows: value });
+});
+
+langInput.onChange((value: string) => {
+  language.set(value as Language);
+});
+
+instructionsInput.onChange((value: string) => {
+  instructions.set(value.toUpperCase());
+});
+
+const onStateChange = () => {
+  grid.update({
+    startingPosition: startingPosition.current,
+    startingDirection: initialValues.startingDirection,
+    gridSize: gridSize.current,
+    instructions: instructions.current,
+    language: language.current,
+  });
+  [startingXInput, startingYInput, columnsInput, rowsInput].forEach((input) => {
+    input.validate();
+  });
+};
+
+[startingPosition, instructions, language, gridSize].forEach((state) => {
+  state.subscribe(onStateChange);
+});
