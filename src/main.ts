@@ -10,10 +10,8 @@ import "./components/index";
 import { Grid } from "./components/Grid";
 import { initialValues } from "./config";
 import {
-  columnIsInBounds,
   greaterThan,
   required,
-  rowIsInBounds,
   validInstructions,
   xIsInBounds,
   yIsInBounds,

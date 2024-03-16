@@ -3,6 +3,7 @@ class CustomInput extends HTMLElement {
   private changeCallbacks: ((value: number | string) => void)[] = [];
   private isValid: boolean = true;
   private errorMessage: string = "";
+  private validatorsArr: ((value: any) => void)[] = [];
 
   connectedCallback() {
     const initialValue = this.getAttribute("initial-value");
@@ -32,15 +33,25 @@ class CustomInput extends HTMLElement {
   `;
 
     this.input = this.querySelector("input") as HTMLInputElement;
-    this.input.oninput = () => this.validate();
+    this.input.oninput = () => {
+      const value = this.input.value;
+      this.changeCallbacks.forEach((cb) => {
+        if (this.input.type === "number") {
+          cb(parseInt(value));
+        } else {
+          cb(value);
+        }
+      });
+    };
   }
 
   public onChange(cb: (value: any) => void) {
     this.changeCallbacks.push(cb);
+    this.validate();
   }
 
   public validators(...validators: ((value: any) => string | undefined)[]) {
-    this.changeCallbacks.push((value) => {
+    this.validatorsArr.push((value) => {
       const errors = validators
         .map((validator) => validator(value))
         .filter(Boolean);
@@ -69,12 +80,8 @@ class CustomInput extends HTMLElement {
 
   public validate() {
     const value = this.input.value;
-    this.changeCallbacks.forEach((cb) => {
-      if (this.input.type === "number") {
-        cb(parseInt(value));
-      } else {
-        cb(value);
-      }
+    this.validatorsArr.forEach((validator) => {
+      validator(value);
     });
   }
 }

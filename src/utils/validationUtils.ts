@@ -11,10 +11,6 @@ export const validInstructions = (value: string) => {
   const regex = new RegExp(`^[${validInstructions}]+$`);
   return regex.test(value) ? undefined : "Invalid instructions";
 };
-export const columnIsInBounds = (value: number) =>
-  gridSize.current.columns > value ? undefined : "Column is out of bounds";
-export const rowIsInBounds = (value: number) =>
-  gridSize.current.rows > value ? undefined : "Row is out of bounds";
 export const xIsInBounds = (x: number) => {
   if (x >= gridSize.current.columns || x < 0) {
     return "X is out of bounds";
