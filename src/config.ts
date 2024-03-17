@@ -8,9 +8,9 @@ export const initialValues: {
   instructions: string;
   language: Language;
 } = {
-  startingPosition: { x: 0, y: 0 },
+  startingPosition: { x: 1, y: 3 },
   startingDirection: Direction.north,
   gridSize: { columns: 10, rows: 10 },
-  instructions: "rffrf",
+  instructions: "frffrffflffffrfrffrfffrf",
   language: Language.english,
 };

@@ -1,22 +1,17 @@
 class CustomInput extends HTMLElement {
   public input!: HTMLInputElement;
   private changeCallbacks: ((value: number | string) => void)[] = [];
-  private isValid: boolean = true;
   private errorMessage: string = "";
   private validatorsArr: ((value: any) => void)[] = [];
 
-  connectedCallback() {
+  constructor() {
+    super();
     const initialValue = this.getAttribute("initial-value");
     const id = this.getAttribute("id");
     const label = this.getAttribute("label");
     const type = this.getAttribute("type") || "text";
     const min = this.getAttribute("min");
     const minNumber = type === "number" && min ? `min="${min}"` : undefined;
-
-    // add style so that when the input is invalid, the label and input are red and the span is visible
-    this.style.display = "flex";
-    this.style.flexDirection = "column";
-    this.style.gap = "0.5rem";
 
     if (!id) {
       throw new Error("CustomInput must have an id attribute");
@@ -65,10 +60,6 @@ class CustomInput extends HTMLElement {
   }
 
   private setIsValid(isValid: boolean) {
-    if (this.isValid === isValid) {
-      return;
-    }
-    this.isValid = isValid;
     const errorMessageSpan = this.querySelector(".error")!;
     if (isValid) {
       errorMessageSpan.classList.remove("active");

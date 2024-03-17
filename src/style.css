@@ -1,6 +1,7 @@
 * {
   box-sizing: border-box;
   font-family: "Open Sans", sans-serif;
+  color: #212037;
 }
 
 body {
@@ -21,6 +22,21 @@ body {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+
+  .input,
+  select {
+    flex: 1;
+  }
+
+  inline-component {
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  label {
+    /* width: 6rem; */
+    min-width: 5rem;
+  }
 }
 
 #grid-container {
@@ -38,21 +54,6 @@ body {
   flex-direction: column;
 }
 
-#config-container inline-component {
-  align-items: center;
-  justify-content: space-between;
-}
-
-#config-container .input,
-#config-container select {
-  flex: 1;
-}
-
-#config-container label {
-  /* width: 6rem; */
-  min-width: 5rem;
-}
-
 /* if mobile */
 @media (max-width: 600px) {
   #grid-container {
@@ -68,26 +69,71 @@ body {
   }
 }
 
-/* CustomInput */
-/* position: absolute;
-transform: translateY(100%); */
 custom-input {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
   .error {
     color: red;
     font-size: 0.8rem;
     position: absolute;
     z-index: -1;
+    margin-left: 0.2rem;
   }
 
   .error.active {
-    transform: translateY(125%);
+    transform: translateY(195%);
   }
 
   .error.inactive {
-    transform: translateY(-100%);
+    transform: translateY(100%);
   }
 
   .error {
     transition: transform 0.3s;
   }
+
+  input {
+    padding: 0.5rem;
+    border: 1px solid #c0cadf;
+    border-radius: 5px;
+  }
+}
+
+custom-input,
+select-input {
+  input,
+  select {
+    padding: 0.5rem;
+    border: 1px solid #c0cadf;
+    border-radius: 5px;
+    background-color: #fafafc;
+  }
+
+  input:focus,
+  select:focus {
+    outline: none;
+    border-color: #8e8ac8;
+  }
+}
+
+grid-component {
+  position: relative;
+  canvas {
+    border: 1px solid #c0cadf;
+    border-radius: 5px;
+    position: relative;
+  }
+  .grid-origin {
+    position: absolute;
+    width: 3rem;
+    height: 3rem;
+    top: -9px;
+    left: -11px;
+  }
+}
+
+.divider {
+  border-top: 1px solid #c0cadf;
 }

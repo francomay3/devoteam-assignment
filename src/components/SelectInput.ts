@@ -3,7 +3,8 @@ class SelectInput extends HTMLElement {
   private options: string[] = [];
   private initialValue: string = "";
 
-  connectedCallback() {
+  constructor() {
+    super();
     this.id = this.getAttribute("id") || "";
     this.label = this.getAttribute("label") || "";
     this.options =

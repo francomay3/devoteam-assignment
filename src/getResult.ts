@@ -15,46 +15,45 @@ const directions = [
   Direction.west,
 ];
 
-const isValidInstruction = (instruction: string): instruction is Instruction =>
-  Object.values(Instruction).includes(instruction as Instruction);
-
 type GetResult = (
   startingPosition: Position,
   instructions: string,
   language: Language
-) => GridState;
+) => GridState | null;
 
 const translateInstruction =
   (arr: { Right: string; Left: string; Forward: string }) =>
-  (instruction: string): Instruction => {
-    switch (instruction) {
-      case arr.Right:
-        return Instruction.Right;
-      case arr.Left:
-        return Instruction.Left;
-      case arr.Forward:
-        return Instruction.Forward;
-      default:
-        throw new Error("Invalid instruction");
+  (instruction: string): Instruction | null => {
+    // check if all instructions are valid
+    if (!Object.values(arr).includes(instruction)) {
+      return null;
     }
+    if (instruction === arr.Right) return Instruction.Right;
+    if (instruction === arr.Left) return Instruction.Left;
+    if (instruction === arr.Forward) return Instruction.Forward;
+    return null;
   };
 
 const translateInstructions = (
   input: string,
   language: Language
-): Instructions => {
-  const upperInput = input.toUpperCase();
-
-  return upperInput
+): Instructions | null => {
+  const upperInput = input
+    .toUpperCase()
     .split("")
     .map(translateInstruction(languageTranslations[language]));
+
+  if (upperInput.includes(null)) {
+    return null;
+  }
+  return upperInput as Instructions;
 };
 
 const getResult: GetResult = (startingPosition, input, language) => {
   const translatedInstructions = translateInstructions(input, language);
 
-  if (!translatedInstructions.every(isValidInstruction)) {
-    throw new Error("Invalid instruction");
+  if (!translatedInstructions) {
+    return null;
   }
 
   const result = translatedInstructions.reduce(
@@ -90,7 +89,7 @@ const getResult: GetResult = (startingPosition, input, language) => {
       directionIndex: 0,
       x: startingPosition.x,
       y: startingPosition.y,
-      path: [],
+      path: [{ x: startingPosition.x, y: startingPosition.y }],
     } as {
       directionIndex: number;
       x: number;

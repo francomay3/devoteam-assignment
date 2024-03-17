@@ -2,33 +2,34 @@ import { initialValues } from "../config";
 import getResult from "../getResult";
 import { Language } from "../utils/languageConfig";
 import { Direction, Position, GridSize } from "../models";
+import originsvg from "../origin.svg";
 
 export class Grid extends HTMLElement {
   private gridLinesWidth = 2;
   private arrowLineWidth = 4;
   private gridLinesColor = "#bfc6d4";
-  private initialRobotColor = "#325aaf";
-  private finalRobotColor = "#ff0000";
+  private initialRobotColor = "#a6aebb";
+  private finalRobotColor = "#5a7cc0";
+  private pathColor = "#758fbd";
   public canvas: HTMLCanvasElement;
 
   constructor() {
     super();
-    this.canvas = document.createElement("canvas");
-    this.canvas.width = 1000;
-    this.canvas.height = 1000;
-    this.canvas.style.width = "100%";
-    // this.drawGrid();
-    this.appendChild(this.canvas);
+    this.innerHTML = /*html*/ `
+    <div class="grid-wrapper">
+    <img src="${originsvg}" alt="origin" class="grid-origin" />
+    <canvas width="1000" height="1000" style="width: 100%"></canvas>
+    </div>
+    `;
+
+    this.canvas = this.querySelector("canvas")!;
+
     this.drawRobot(
       this.initialRobotColor,
       initialValues.startingPosition,
       initialValues.startingDirection,
       initialValues.gridSize
     );
-  }
-
-  connectedCallback() {
-    this.id = this.getAttribute("id") || "grid-container";
   }
 
   clear() {
@@ -82,9 +83,19 @@ export class Grid extends HTMLElement {
     this.clear();
     this.drawGrid(gridSize);
 
-    const final = getResult(startingPosition, instructions, language);
+    const result = getResult(startingPosition, instructions, language);
 
-    this.drawPath(final.path, gridSize);
+    if (!result) {
+      this.drawRobot(
+        this.initialRobotColor,
+        startingPosition,
+        startingDirection,
+        gridSize
+      );
+      return;
+    }
+
+    this.drawPath(result.path, gridSize);
 
     this.drawRobot(
       this.initialRobotColor,
@@ -92,22 +103,34 @@ export class Grid extends HTMLElement {
       startingDirection,
       gridSize
     );
+
     this.drawRobot(
       this.finalRobotColor,
-      final.position,
-      final.direction,
+      result.position,
+      result.direction,
       gridSize
     );
   }
 
   private drawPath(path: Position[], gridSize: GridSize) {
+    if (path.length < 2) {
+      return;
+    }
+
     const columnWidth = this.canvas.width / gridSize.columns;
     const rowHeight = this.canvas.height / gridSize.rows;
     const context = this.canvas.getContext("2d")!;
 
     context.save();
-    context.strokeStyle = this.finalRobotColor;
+    context.strokeStyle = this.pathColor;
     context.lineWidth = this.arrowLineWidth;
+    context.lineCap = "round";
+    context.lineJoin = "round";
+    context.shadowOffsetX = 0;
+    context.shadowOffsetY = 0;
+    context.shadowBlur = 5;
+    context.shadowColor = this.pathColor;
+    context.setLineDash([5, 15]);
 
     context.beginPath();
     context.moveTo(

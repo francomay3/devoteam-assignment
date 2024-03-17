@@ -16,6 +16,7 @@ import {
   xIsInBounds,
   yIsInBounds,
 } from "./utils/validationUtils";
+import getResult from "./getResult";
 
 const appElement = document.querySelector<HTMLDivElement>("#app");
 
@@ -50,6 +51,12 @@ appElement.innerHTML = /*html*/ `
       instructions.current
     }"></custom-input>
 
+    <div class="divider"></div>
+
+    <span class="resultSpan">Result: 
+      <span id="result-value">-</span>
+    </span>
+
   </div>
 
   <grid-component id="grid"></grid-component>
@@ -70,8 +77,6 @@ startingYInput.validators(required, yIsInBounds);
 columnsInput.validators(required, greaterThan(0));
 rowsInput.validators(required, greaterThan(0));
 instructionsInput.validators(required, validInstructions);
-
-grid.update(initialValues);
 
 startingXInput.onChange((value: number) => {
   startingPosition.set({ x: value, y: startingPosition.current.y });
@@ -108,11 +113,27 @@ const onStateChange = () => {
     instructions: instructions.current,
     language: language.current,
   });
-  [startingXInput, startingYInput, columnsInput, rowsInput].forEach((input) => {
+  [
+    startingXInput,
+    startingYInput,
+    columnsInput,
+    rowsInput,
+    instructionsInput,
+  ].forEach((input) => {
     input.validate();
   });
+  const result = getResult(
+    startingPosition.current,
+    instructions.current,
+    language.current
+  );
+  document.getElementById("result-value")!.innerText = result
+    ? `${result.position.x} ${result.position.y} ${result.direction}`
+    : "-";
 };
 
 [startingPosition, instructions, language, gridSize].forEach((state) => {
   state.subscribe(onStateChange);
 });
+
+onStateChange();
