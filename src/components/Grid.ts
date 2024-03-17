@@ -1,6 +1,6 @@
 import { initialValues } from "../utils/config";
 import getResult from "../utils/getResult";
-import { Language } from "../utils/languageConfig";
+import { Language } from "../utils/config";
 import { Direction, Position, GridSize } from "../models";
 import originsvg from "../origin.svg";
 

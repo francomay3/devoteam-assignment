@@ -53,7 +53,7 @@ appElement.innerHTML = /*html*/ `
 
     <div class="divider"></div>
 
-    <span class="resultSpan">Result: 
+    <span class="result-span">Result: 
       <span id="result-value">-</span>
     </span>
 
