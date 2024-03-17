@@ -1,6 +1,6 @@
-import { initialValues } from "./config";
-import { Language } from "./utils/languageConfig";
+import { initialValues } from "./utils/config";
 import { Position } from "./models";
+import { Language } from "./utils/config";
 
 // I usually use this pattern to manage state in my vanilla js projects
 class State<T> {

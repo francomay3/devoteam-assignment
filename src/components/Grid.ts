@@ -1,5 +1,5 @@
-import { initialValues } from "../config";
-import getResult from "../getResult";
+import { initialValues } from "../utils/config";
+import getResult from "../utils/getResult";
 import { Language } from "../utils/languageConfig";
 import { Direction, Position, GridSize } from "../models";
 import originsvg from "../origin.svg";

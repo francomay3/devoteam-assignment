@@ -1,5 +1,5 @@
-import { languageTranslations } from "./languageConfig";
 import { language, gridSize } from "../StateManager";
+import { languageTranslations } from "./config";
 
 export const required = (value: string | number) =>
   value === "" ? "Required" : undefined;

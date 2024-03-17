@@ -1,5 +1,5 @@
 import "./style.css";
-import { Language } from "./utils/languageConfig";
+import { Language } from "./utils/config";
 import {
   startingPosition,
   language,
@@ -8,15 +8,15 @@ import {
 } from "./StateManager";
 import "./components/index";
 import { Grid } from "./components/Grid";
-import { initialValues } from "./config";
+import { initialValues } from "./utils/config";
 import {
   greaterThan,
   required,
   validInstructions,
   xIsInBounds,
   yIsInBounds,
-} from "./utils/validationUtils";
-import getResult from "./getResult";
+} from "./utils/validation";
+import getResult from "./utils/getResult";
 
 const appElement = document.querySelector<HTMLDivElement>("#app");
 

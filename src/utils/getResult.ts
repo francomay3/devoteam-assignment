@@ -1,12 +1,11 @@
-import { languageTranslations } from "./utils/languageConfig";
 import {
   Position,
   Direction,
   Instruction,
   Instructions,
   GridState,
-} from "./models";
-import { Language } from "./utils/languageConfig";
+} from "../models";
+import { Language, languageTranslations } from "./config";
 
 const directions = [
   Direction.north,
